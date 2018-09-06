@@ -56,7 +56,7 @@ server.get('/recipes', (req, res) => {
 })
 
   
-// --- Posting recipes --- 
+// --- Posting recipe --- 
 server.post('/recipes', (req, res) => {
     const recipe = req.body;
     db.addRecipe(recipe)
