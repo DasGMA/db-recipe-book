@@ -37,11 +37,10 @@ server.post('/dishes', (req, res) => {
     const dish = req.body
     db.addDish(dish)
       .then(id => {
-           res.status(200).json(...id)
+           res.status(200).json(id)
       })
           .catch(err => res.status(500).json(err))
   });
-
 
 
 // --- Getting recipes ---
@@ -61,7 +60,7 @@ server.post('/recipes', (req, res) => {
     const recipe = req.body;
     db.addRecipe(recipe)
         .then(response => {
-            res.status(201).json(...response)
+            res.status(201).json(response)
         })
         .catch(error => {
             res.status(500).json(error)
