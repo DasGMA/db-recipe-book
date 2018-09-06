@@ -1,8 +1,7 @@
 const express = require('express');
 const helmet = require('helmet');
-const knex = require('knex');
 
-const db = require('./db/dbConfig');
+const db = require('./db/helpers/helper');
 
 const server = express();
 
@@ -16,7 +15,7 @@ server.get('/', (req, res) => {
 // --- Getting dishes ---
 
 server.get('/dishes', (req, res) => {
-    db('dishes')
+    db.getDishes()
       .then(dishes => res.status(200).json(dishes))
       .catch(err => res.status(500).json(err))
   });
@@ -24,9 +23,7 @@ server.get('/dishes', (req, res) => {
 // --- Getting a dish by ID ---
 server.get('/dishes/:id', (req, res) => {
     const { id } = req.params
-    db('dishes')
-    .select()
-    .where('id', id)
+    db.getDish(id)
     .then(dishes => {
       res.status(200).json(dishes);
     })
@@ -37,23 +34,38 @@ server.get('/dishes/:id', (req, res) => {
 
 // --- Posting new dish ---
 server.post('/dishes', (req, res) => {
-    const dish = req.body 
-    db('dishes')
-      .insert(dish)
-      .then(([id]) => {
-        db('dishes')
-          .where({ id })
-          .then(dish => res.status(200).json(dish))
-          .catch(err => res.status(500).json(err))
+    const dish = req.body
+    db.addDish(dish)
+      .then(id => {
+           res.status(200).json(...id)
       })
-      .catch(err => res.status(500).json(err))
+          .catch(err => res.status(500).json(err))
   });
-  
-// --- Getting recipes --- 
+
+
+
+// --- Getting recipes ---
 server.get('/recipes', (req, res) => {
-    db('recipes')
-      .then(recipes => res.status(200).json(recipes))
-      .catch(err => res.status(500).json(err))
+    db.getRecipes()
+        .then(response => {
+            res.status(200).json(response)
+        })
+        .catch(error => {
+            res.status(500).json(error)
+        })
+})
+
+  
+// --- Posting recipes --- 
+server.post('/recipes', (req, res) => {
+    const recipe = req.body;
+    db.addRecipe(recipe)
+        .then(response => {
+            res.status(201).json(...response)
+        })
+        .catch(error => {
+            res.status(500).json(error)
+        })
 });
 
 server.listen(9000);
